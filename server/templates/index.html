@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Свой-чужой</title>
+</head>
+<body>
+    Тут будет форма для загрузки фото.
+    <h1>Загрузка Фото</h1>
+    <form action="upload" method="post" enctype=multipart/form-data>
+        <input type="file" name="file" multiple>
+        <br/>
+        <input type="submit" value="Загрузить">
+    </form>
+    <br>
+    {% if url %}
+        <a href="face/{{url}}">Скачать</a>
+    {% endif %}
+</body>
+</html>
