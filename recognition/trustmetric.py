@@ -57,14 +57,29 @@ class TrustMetric:
         l += 1
         return l / ln, 1 - l / ln
 
+    def get_statistics(self):
+        s1 = 'Min: {}'.format(round(self.v[0], 2) if len(self.v) else 'unknown')
+        s2 = 'Max: {}'.format(round(self.v[-1], 2) if len(self.v) else 'unknown')
+        s3 = 'Average: {}'.format(round(sum(self.v) / len(self.v), 2) if len(self.v) else 'unknown')
+        s4 = 'Median: {}'.format(round(self.v[len(self.v) // 2], 2) if len(self.v) else 'unknown')
+        return [s1, s2, s3, s4]
+
     def draw_hist(self):
         plt.clf()
+        fig = plt.figure(1)
+        ax = fig.add_axes([0.13, 0.1, 0.6, 0.72])
         snsplot = sns.kdeplot(self.data['value'], shade=True)
         x_lim = snsplot.axes.get_xlim()
         y_lim = snsplot.axes.get_ylim()
-        f0, = plt.plot([self.confidence, self.confidence], y_lim, color="magenta")
-        f1, = plt.plot([-1, -1], [-1, -1], color="green")
-        f2, = plt.plot([-1, -1], [-1, -1], color="red")
+        f0, = ax.plot([self.confidence, self.confidence], y_lim, color="magenta")
+        ar = [-1, -1]
+        f1 = ax.scatter(ar, ar, color="green")
+        f2 = ax.scatter(ar, ar, color="red")
+        f3 = ax.scatter(ar, ar, color="blue")
+        f4 = ax.scatter(ar, ar, color="blue")
+        f5 = ax.scatter(ar, ar, color="blue")
+        f6 = ax.scatter(ar, ar, color="blue")
+        st = self.get_statistics()
         plt.xlim(x_lim)
         plt.ylim(y_lim)
         plt.title("Коэффициент доверия")
@@ -72,13 +87,17 @@ class TrustMetric:
         plt.ylabel('Частота')
         pc = self.find_value(self.confidence)
         pc = list(map(lambda x: str(round(x * 100, 2)), pc))
-        plt.legend([f0, f1, f2], [str(round(self.confidence, 2)), pc[0] + '%', pc[1] + '%'])
+        ax.legend([f0, f1, f2, f3, f4, f5, f6], [str(round(self.confidence, 2)), pc[0] + '%', pc[1] + '%', *st],
+                  bbox_to_anchor=(1, 0.5), loc='center left')
         return snsplot
 
     def show_hist(self):
-        input('Input something:')
         self.v.sort()
         self.data = pd.DataFrame.from_dict({'value': self.v})
+        print('====== Results: =====')
+        print('\n'.join(self.get_statistics()))
+        print('======   End    =====')
+        input('Input something:')
 
         def onclick(event):
             x, y = event.xdata, event.ydata

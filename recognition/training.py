@@ -63,10 +63,14 @@ def parse_video_cv(folder_from, folder_to):
         stream = cv2.VideoCapture(file)
         while stream.isOpened():
             ret, image = stream.read()
+            # image = cv2.rotate(image, cv2.cv2.ROTATE_90_CLOCKWISE)
             if not ret:
                 break
             faces = detect_faces_cv(detector, image)
             for (x, y, w, h) in faces:
-                face = image[y - p:y + h + p, x - p:x + w + p]
-                cv2.imwrite(folder_to + '/' + str(i) + '.png', face)
-                i += 1
+                try:
+                    face = image[y - p:y + h + p, x - p:x + w + p]
+                    cv2.imwrite(folder_to + '/' + str(i) + '.png', face)
+                    i += 1
+                except Exception as ex:  # empty image
+                    pass
