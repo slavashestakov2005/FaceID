@@ -1,6 +1,5 @@
 import face_recognition
 import cv2
-from .config import *
 
 
 def get_detector_alt2_cv():
@@ -27,22 +26,22 @@ def detect_faces_fr(image):
 
 def compare_faces_cv(frame, boxes, recognizer, font):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    a, b = 0, 0
+    a, b, trust = 0, 0, []
     for (x, y, w, h) in boxes:
         name, confidence = recognizer.predict(gray[y:y + h, x:x + w])
-        print(name, confidence)
-        if confidence < Config.CV_CONFIDENCE:
+        trust.append(confidence)
+        if confidence < recognizer.confidence:
             name = 'Known'
             a += 1
-            confidence = "  {0}%".format(round(100 - confidence))
+            confidence = "  {0} y.e.".format(round(confidence))
         else:
             name = 'Unknown'
             b += 1
-            confidence = "  {0}%".format(round(100 - confidence))
+            confidence = "  {0} y.e.".format(round(confidence))
         print(name, confidence)
         cv2.putText(frame, name, (x + 5, y - 5), font, 1, (255, 255, 255), 2)
         cv2.putText(frame, str(confidence), (x + 5, y + h - 5), font, 1, (255, 0, 0), 1)
-    return a, b
+    return a, b, trust
 
 
 def compare_faces_fr(image, boxes, face):
