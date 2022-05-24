@@ -12,3 +12,5 @@ class Config:
     MIN_FACE_SIZE = (150, 150)
     DETECTOR_KWARGS = {'scaleFactor': 1.2, 'minNeighbors': 5, 'minSize': MIN_FACE_SIZE}
     PLOT_TIME = 5
+    CAPTURE_TIME = 30
+    PLAY_TIME = 60

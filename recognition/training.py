@@ -12,6 +12,8 @@ from glob import glob
 
 def chose_images(images):
     length, new_images = len(images), []
+    if length <= Config.IMAGES_COUNT:
+        return images
     step = length // Config.IMAGES_COUNT
     i = (length - step * Config.IMAGES_COUNT) // 2
     while i < length and len(new_images) < Config.IMAGES_COUNT:

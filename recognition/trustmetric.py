@@ -14,10 +14,14 @@ class TrustMetric:
         self.end_time = self.start
         self.confidence, self.precision = Config.CV_CONFIDENCE1, Config.CV_PRECISION1
         self.left, self.right = Config.CV_LEFT, Config.CV_RIGHT
+        self.is_closed_plot, self.fig, self.ax = False, None, None
 
     def load_from_model(self, model):
         self.confidence, self.precision = model.confidence, model.precision
         self.left, self.right = model.left, model.right
+
+    def open_window(self):
+        self.fig = plt.figure(0)
 
     def save_to_model(self, model):
         model.confidence, model.precision = self.confidence, self.precision
@@ -48,6 +52,8 @@ class TrustMetric:
             self.end_time = self.x[-1]
             while self.end_time - self.x[1] > Config.PLOT_TIME:
                 self.pop()
+        if len(self.x) and self.x[-1] > Config.PLAY_TIME or not plt.fignum_exists(0):
+            self.is_closed_plot = True
         drawnow(self.make_fig)
 
     def find_value(self, v):
@@ -81,6 +87,9 @@ class TrustMetric:
         s6 = self.get_message()
         return [s1, s2, s3, s4, s5, s6]
 
+    def close_plot(self):
+        plt.close()
+
     def draw_hist(self):
         plt.clf()
         fig = plt.figure(1)
@@ -110,15 +119,17 @@ class TrustMetric:
         pc = list(map(lambda x: str(round(x * 100, 2)), pc))
         val = [str(round(self.confidence, 2)), pc[0] + '%', pc[1] + '%', *st]
         ax.legend([f0, f1, f2, f3, f4, f5, f6, f7, f8], val, bbox_to_anchor=(1, 0.5), loc='center left')
-        return snsplot
+        return snsplot, ax
 
-    def show_hist(self):
+    def show_hist(self, filename=None):
         self.v.sort()
         self.data = pd.DataFrame.from_dict({'value': self.v})
-        print('====== Results: =====')
+        print('====== Результаты =====')
         print('\n'.join(self.get_statistics()))
-        print('======   End    =====')
-        input('Input something:')
+        print('======   Конец    =====')
+        input('Теперь посмотрим на распределение «коэффициента доверия». ')
+        input('Вы можете нажимать на график чтобы узнать процентное распределение «коэффициента доверия». ')
+        input('Нажмите что-нибудь, чтобы мы ноконец вывели Вам график. ')
 
         def onclick(event):
             x, y = event.xdata, event.ydata
@@ -127,6 +138,8 @@ class TrustMetric:
                 self.draw_hist()
                 plt.show()
 
-        snsplot = self.draw_hist()
+        ax, snsplot = self.draw_hist()
         snsplot.get_figure().canvas.mpl_connect('button_release_event', onclick)
+        if filename:
+            snsplot.figure.savefig(filename, format="png")
         plt.show()

@@ -26,15 +26,21 @@ from glob import glob
 #     cv2.destroyAllWindows()
 
 
-def capture_stream_cv(face_path):
+def capture_stream_cv(face_path, video=None, result=None):
     recognizer, trust_metric = CVModel(), TrustMetric()
     recognizer.read(face_path)
     trust_metric.load_from_model(recognizer)
     detector = get_detector_default_cv()
     font = get_font()
     video_capture = cv2.VideoCapture(0)
+    if video:
+        frame_size = (int(video_capture.get(3)), int(video_capture.get(4)))
+        output = cv2.VideoWriter(video, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 20, frame_size)
+    trust_metric.open_window()
     while True:
         ret, frame = video_capture.read()
+        if video:
+            output.write(frame)
         tim = time()
         boxes = detect_faces_cv(detector, frame)
         a, b, trust = compare_faces_cv(frame, boxes, recognizer, font)
@@ -47,17 +53,22 @@ def capture_stream_cv(face_path):
         cv2.imshow("Frame", frame)
         if len(trust):
             trust_metric.append(trust[0], tim)
-        trust_metric.show()
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(1) == 27 or cv2.getWindowProperty('Frame', 0) == -1 or trust_metric.is_closed_plot:
             break
+        trust_metric.show()
         # if a:
         #     send_message('«Своих»: {}, «чужих»: {}'.format(a, b))
     video_capture.release()
     cv2.destroyAllWindows()
-    trust_metric.show_hist()
-    send_message(trust_metric.get_message())
+    if video:
+        output.release()
+    trust_metric.close_plot()
+    answer = trust_metric.get_result()
+    trust_metric.show_hist(result)
+    # send_message(trust_metric.get_message())
     trust_metric.save_to_model(recognizer)
     recognizer.write(face_path)
+    return answer
 
 
 def capture_stream_from_image_folder_cv(face_path, folder):
