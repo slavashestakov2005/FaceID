@@ -7,5 +7,5 @@ def send_message(text):
         bot = telebot.TeleBot(Config.TOKEN)
         for chat in Config.chats:
             bot.send_message(chat, text)
-    else:
-        print(text)
+    # else:
+    #     print(text)

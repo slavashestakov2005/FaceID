@@ -8,7 +8,8 @@ from shutil import make_archive, unpack_archive, rmtree
 class CVModel:
     def __init__(self):
         self.recognizer = get_recognizer_cv()
-        self.confidence, self.left, self.right = Config.CV_CONFIDENCE, 40, 160
+        self.confidence, self.precision = Config.CV_CONFIDENCE1, Config.CV_PRECISION1
+        self.left, self.right = Config.CV_LEFT, Config.CV_RIGHT
 
     def train(self, x, y):
         self.recognizer.train(x, y)
@@ -27,9 +28,8 @@ class CVModel:
         with open(data_file, "rb") as f:
             data = pickle.loads(f.read())
         self.recognizer.read(model_file)
-        self.confidence = data['confidence']
-        self.left = data['left']
-        self.right = data['right']
+        self.confidence, self.precision = data['confidence'], data['precision']
+        self.left, self.right = data['left'], data['right']
         rmtree(folder)
 
     def write(self, face):
@@ -37,7 +37,7 @@ class CVModel:
         if not os.path.exists(folder):
             os.makedirs(folder)
         data_file = folder + '/data'
-        data = {'confidence': self.confidence, 'left': self.left, 'right': self.right}
+        data = {'confidence': self.confidence, 'precision': self.precision, 'left': self.left, 'right': self.right}
         with open(data_file, "wb") as f:
             f.write(pickle.dumps(data))
         model_file = folder + '/model'

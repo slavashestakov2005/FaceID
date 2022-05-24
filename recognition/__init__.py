@@ -5,4 +5,4 @@ from .recognition import *
 from .training import *
 from .trustmetric import *
 from .videostream import *
-from .net import *
+# from .net import *

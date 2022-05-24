@@ -1,6 +1,6 @@
 from imutils import paths
-import face_recognition
-import pickle
+# import face_recognition
+# import pickle
 import cv2
 from PIL import Image
 import numpy as np
@@ -10,26 +10,37 @@ from .config import Config
 from glob import glob
 
 
-def train_fr(folder):
-    images = list(paths.list_images(folder))
-    known_encodings = []
-    for (i, imagePath) in enumerate(images):
-        image = cv2.imread(imagePath)
-        rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        boxes = face_recognition.face_locations(rgb, model='hog')
-        encodings = face_recognition.face_encodings(rgb, boxes)
-        for encoding in encodings:
-            known_encodings.append(encoding)
-    data = {"encodings": known_encodings}
-    f = open(folder + '.face', "wb")
-    f.write(pickle.dumps(data))
-    f.close()
-    return folder + '.face'
+def chose_images(images):
+    length, new_images = len(images), []
+    step = length // Config.IMAGES_COUNT
+    i = (length - step * Config.IMAGES_COUNT) // 2
+    while i < length and len(new_images) < Config.IMAGES_COUNT:
+        new_images.append(images[i])
+        i += step
+    return new_images
+
+
+# def train_fr(folder):
+#     images = list(paths.list_images(folder))
+#     known_encodings = []
+#     for (i, imagePath) in enumerate(images):
+#         image = cv2.imread(imagePath)
+#         rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+#         boxes = face_recognition.face_locations(rgb, model='hog')
+#         encodings = face_recognition.face_encodings(rgb, boxes)
+#         for encoding in encodings:
+#             known_encodings.append(encoding)
+#     data = {"encodings": known_encodings}
+#     f = open(folder + '.face', "wb")
+#     f.write(pickle.dumps(data))
+#     f.close()
+#     return folder + '.face'
 
 
 def train_cv(folder, folder_to):
     detector, recognizer = get_detector_default_cv(), CVModel()
     images = list(paths.list_images(folder))
+    images = chose_images(images)
     data1, data2 = [], []
     for (i, imagePath) in enumerate(images):
         image = Image.open(imagePath).convert('L')
@@ -37,6 +48,7 @@ def train_cv(folder, folder_to):
         faces = detect_faces_numpy_cv(detector, img_numpy)
         for (x, y, w, h) in faces:
             face = img_numpy[y:y + h, x:x + w]
+            face = cv2.resize(face, Config.FACE_SIZE)
             cv2.imwrite(folder_to + '/' + str(len(data2)) + '.png', face)
             data1.append(face)
             data2.append(0)

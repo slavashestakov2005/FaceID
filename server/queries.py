@@ -47,7 +47,7 @@ def cv_model(folder):
 
 def create_dir(directory, remove_old=True):
     if os.path.exists(directory) and remove_old:
-       rmtree(directory)
+        rmtree(directory)
     video_directory = video_folder(directory)
     image_directory = image_folder(directory)
     temp_directory = temp_folder(directory)
