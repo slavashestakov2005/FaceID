@@ -1,7 +1,8 @@
 from recognition.capture import *
 from server.queries import generate_folder_name, create_dir
-from recognition.training import train_cv
 from recognition.videostream import capture_stream_cv
+from recognition.cv import CVModel
+from recognition.detector import Detector
 from telegram.bot import send_message
 
 
@@ -29,7 +30,7 @@ data = [
     '1. На всё игру у Вас есть 1 минута, в течении которой Вас будет снимать камера.',
     '2. Нельзя отодвигаться от камеры или предвигаться к ней.',
     '3. Зелёный квадрат означает, что Вас распознали, красный - что не распознали.',
-    '4. Ваша задача получить сделать так, чтобы Вас не распознали на хотя бы 20% кадров.',
+    '4. Ваша задача сделать так, чтобы Вас не распознали на хотя бы 20% кадров.',
     '5. «Коэффициент доверия» это то, на сколько Вы похожи на себя. Чем меньше - тем лучше.',
     '6. Если Вы выиграете, то получите приз.',
     'Если готовы играть, то нажмите Enter.',
@@ -64,7 +65,9 @@ write(data[6:11])
 images_count = capture_data(folder + '/image', folder + '/video/train.avi')
 write([*data[11:12], data[12].format(images_count)])
 write([data[13 + int(images_count > Config.IMAGES_COUNT)], *data[15:17]])
-train_cv(folder, folder + '/temp')
+model = CVModel()
+model.train(*Detector().get_data(folder, folder + '/temp'))
+model.write(folder)
 write(data[17:27])
 result = capture_stream_cv(folder, folder + '/video/test.avi', folder + '/result.png')
 send_message(message_template.format(name, tim, 'свой' if result else 'чужой'))

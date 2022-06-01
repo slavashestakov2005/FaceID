@@ -1,18 +1,20 @@
-from .recognition import *
+from .detector import Detector
+from .config import Config
+import cv2
 from time import time
 
 
 def capture_data(path, video=None):
     cv2.namedWindow('preview')
     video_capture = cv2.VideoCapture(0)
-    detector = get_detector_default_cv()
+    detector = Detector()
     if video:
         frame_size = (int(video_capture.get(3)), int(video_capture.get(4)))
         output = cv2.VideoWriter(video, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 20, frame_size)
     cnt, start = 0, time()
     while video_capture.isOpened():
         ret, frame = video_capture.read()
-        boxes = detect_faces_cv(detector, frame)
+        boxes = detector.detect_image(frame)
         if video:
             output.write(frame)
         if len(boxes):

@@ -1,5 +1,6 @@
 Система «свой-чужой».  
-[Презентация](https://docs.google.com/presentation/d/1TZBpWhKmof9FLp4XzRLFW6GwD1Fmsk-J/edit?usp=sharing&ouid=104378135732805691471&rtpof=true&sd=true) с предзащиты.
+[Презентация](https://docs.google.com/presentation/d/1TZBpWhKmof9FLp4XzRLFW6GwD1Fmsk-J/edit?usp=sharing&ouid=104378135732805691471&rtpof=true&sd=true) с предзащиты.  
+[Календарный план](https://docs.google.com/spreadsheets/d/1N6Cu9KpMLCV-4HiQI2XPntv9Kqjaka5IoL8DQEBPFJ0/edit?usp=sharing).
 
 ## Техническое задание
 1. Загрузили через страничку фото "свой", на выходе получили сетку обученную под распознание данного экземпляра фото

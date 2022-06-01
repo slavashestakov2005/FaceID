@@ -1,15 +1,17 @@
-from .recognition import get_recognizer_cv
-from .config import Config
+from .config import CVConfig
+from ..model import Model
 import os
 import pickle
+import cv2
 from shutil import make_archive, unpack_archive, rmtree
 
 
-class CVModel:
+class CVModel(Model):
     def __init__(self):
-        self.recognizer = get_recognizer_cv()
-        self.confidence, self.precision = Config.CV_CONFIDENCE1, Config.CV_PRECISION1
-        self.left, self.right = Config.CV_LEFT, Config.CV_RIGHT
+        super().__init__()
+        self.recognizer = cv2.face.LBPHFaceRecognizer_create()
+        self.confidence, self.precision = CVConfig.CONFIDENCE1, CVConfig.PRECISION1
+        self.left, self.right = CVConfig.LEFT, CVConfig.RIGHT
 
     def train(self, x, y):
         self.recognizer.train(x, y)
@@ -50,3 +52,22 @@ class CVModel:
         make_archive(zip_file, 'zip', folder)
         os.rename(zip_file + '.zip', zip_file + '.face')
         rmtree(folder)
+
+    def compare(self, frame, boxes, font):
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        a, b, trust = 0, 0, []
+        for (x, y, w, h) in boxes:
+            face = gray[y:y + h, x:x + w]
+            name, confidence = self.predict(cv2.resize(face, CVConfig.FACE_SIZE))
+            trust.append(confidence)
+            if confidence < self.confidence:
+                name = 'Known'
+                a += 1
+                confidence = "  {0} y.e.".format(round(confidence))
+            else:
+                name = 'Unknown'
+                b += 1
+                confidence = "  {0} y.e.".format(round(confidence))
+            cv2.putText(frame, name, (x + 5, y - 5), font, 1, (255, 255, 255), 2)
+            cv2.putText(frame, str(confidence), (x + 5, y + h - 5), font, 1, (255, 0, 0), 1)
+        return a, b, trust

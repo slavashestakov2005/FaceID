@@ -12,8 +12,7 @@ class TrustMetric:
         self.x, self.y, self.v, self.data = deque(), deque(), [], []
         self.start = time()
         self.end_time = self.start
-        self.confidence, self.precision = Config.CV_CONFIDENCE1, Config.CV_PRECISION1
-        self.left, self.right = Config.CV_LEFT, Config.CV_RIGHT
+        self.confidence, self.precision, self.left, self.right = 0, 0, 0, 0
         self.is_closed_plot, self.fig, self.ax = False, None, None
 
     def load_from_model(self, model):

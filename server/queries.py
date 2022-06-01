@@ -7,7 +7,7 @@ from shutil import make_archive, unpack_archive, rmtree
 from time import time
 from .config import Config
 from .errors import forbidden_error, not_found_error
-from recognition import train_cv, parse_video_cv, parse_image_cv
+from recognition import Detector, CVModel
 '''
     generate_folder_name()              Придумывает уникаольное имя для лица.
     /               index()             Возвращает стартовую страницу.
@@ -102,7 +102,7 @@ def upload_image():
         name = os.path.join(temp_directory, str(i) + '.' + file.filename.rsplit('.')[-1])
         i += 1
         file.save(name)
-    parse_image_cv(temp_directory, image_directory)
+    Detector().parse_images(temp_directory, image_directory)
     make_archive(images_archive(directory), 'zip', image_directory)
     clear_dir(temp_directory)
     return render_template('index.html', dataurl=url)
@@ -125,7 +125,7 @@ def upload_video():
         name = os.path.join(video_directory, str(i) + '.' + file.filename.rsplit('.')[-1])
         i += 1
         file.save(name)
-    parse_video_cv(video_directory, image_directory)
+    Detector().parse_videos(video_directory, image_directory, 90)
     make_archive(images_archive(directory), 'zip', image_directory)
     return render_template('index.html', dataurl=url)
 
@@ -149,7 +149,9 @@ def upload_zip():
         file.save(name)
         unpack_archive(name, temp_directory, "zip")
         os.remove(name)
-    train_cv(directory, image_directory)
+    model = CVModel()
+    model.train(*Detector().get_data(directory, image_directory))
+    model.write(directory)
     make_archive(images_archive(directory), 'zip', image_directory)
     return render_template('index.html', url=url)
 

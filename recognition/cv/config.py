@@ -1,0 +1,8 @@
+class CVConfig:
+    CONFIDENCE1 = 60
+    CONFIDENCE2 = 55
+    PRECISION1 = 80
+    PRECISION2 = 65
+    LEFT = 20
+    RIGHT = 140
+    FACE_SIZE = (300, 300)

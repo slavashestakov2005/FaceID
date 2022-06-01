@@ -2,12 +2,12 @@ import pickle
 from .fr_utils import *
 from .inception_blocks_v2 import *
 from .makens import prepare_database
-from ..recognition import get_detector_alt2_cv, detect_faces_cv
-from recognition import Config
+from recognition.config import Config
+from recognition.detector import Detector
 
 
 def process_frame(frame, detector, database):
-    faces = detect_faces_cv(detector, frame)
+    faces = detector.detect_image(frame)
     identities = []
     for (x, y, w, h) in faces:
         x1 = x - Config.PADDING
@@ -55,7 +55,7 @@ def train_net(folder):
 
 def capture_stream_net(face_path):
     database = pickle.loads(open(face_path, "rb").read())
-    detector = get_detector_alt2_cv()
+    detector = Detector()
 
     cv2.namedWindow("preview")
     video_capture = cv2.VideoCapture(0)

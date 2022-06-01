@@ -1,6 +1,7 @@
-from .recognition import *
-from .cvmodel import CVModel
+from .cv import CVModel
 from .trustmetric import TrustMetric
+from .detector import Detector
+from .utils import get_font
 from time import time
 from telegram import send_message
 import cv2
@@ -27,11 +28,9 @@ from glob import glob
 
 
 def capture_stream_cv(face_path, video=None, result=None):
-    recognizer, trust_metric = CVModel(), TrustMetric()
+    recognizer, trust_metric, detector, font = CVModel(), TrustMetric(), Detector(), get_font()
     recognizer.read(face_path)
     trust_metric.load_from_model(recognizer)
-    detector = get_detector_default_cv()
-    font = get_font()
     video_capture = cv2.VideoCapture(0)
     if video:
         frame_size = (int(video_capture.get(3)), int(video_capture.get(4)))
@@ -42,8 +41,8 @@ def capture_stream_cv(face_path, video=None, result=None):
         if video:
             output.write(frame)
         tim = time()
-        boxes = detect_faces_cv(detector, frame)
-        a, b, trust = compare_faces_cv(frame, boxes, recognizer, font)
+        boxes = detector.detect_image(frame)
+        a, b, trust = recognizer.compare(frame, boxes, font)
         for i in range(len(boxes)):
             x, y, w, h = boxes[i]
             color = (0, 255, 0)
@@ -72,18 +71,16 @@ def capture_stream_cv(face_path, video=None, result=None):
 
 
 def capture_stream_from_image_folder_cv(face_path, folder):
-    recognizer, trust_metric = CVModel(), TrustMetric()
+    recognizer, trust_metric, detector, font = CVModel(), TrustMetric(), Detector(), get_font()
     recognizer.read(face_path)
     trust_metric.load_from_model(recognizer)
-    detector = get_detector_default_cv()
-    font = get_font()
     for file in glob(folder + '/*.*'):
         frame = cv2.imread(file)
         tim = time()
-        boxes = detect_faces_cv(detector, frame)
+        boxes = detector.detect_image(frame)
         for (x, y, w, h) in boxes:
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        a, b, trust = compare_faces_cv(frame, boxes, recognizer, font)
+        a, b, trust = recognizer.compare(frame, boxes, font)
         cv2.imshow("Frame", frame)
         if len(trust):
             trust_metric.append(trust[0], tim)
