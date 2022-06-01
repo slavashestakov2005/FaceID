@@ -64,7 +64,7 @@ def capture_stream_cv(face_path, video=None, result=None):
     trust_metric.close_plot()
     answer = trust_metric.get_result()
     trust_metric.show_hist(result)
-    # send_message(trust_metric.get_message())
+    send_message(trust_metric.get_message())
     trust_metric.save_to_model(recognizer)
     recognizer.write(face_path)
     return answer

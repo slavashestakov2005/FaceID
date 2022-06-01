@@ -2,7 +2,7 @@ import cv2
 
 
 class Config:
-    PADDING = 5
+    PADDING = 10
     MODEL_FOLDER = 'server/data/model'
     IMAGES_COUNT = 250
     FACE_SIZE = (300, 300)

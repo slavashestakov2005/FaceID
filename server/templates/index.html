@@ -1,46 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Свой-чужой</title>
+    <script src="JS/script.js"></script>
 </head>
 <body>
-    <table width="100%">
-        <tr>
-            <td width="50%"></td>
-            <td width="50%"></td>
-        </tr>
-        <tr><td>
-            <h1>Загрузка Фото</h1>
-            <form action="upload_image" method="post" enctype=multipart/form-data>
-                <input type="file" name="file" multiple>
-                <br/>
-                <input type="submit" value="Загрузить">
-            </form>
-            <br>
-            <h1>Загрузка Видео</h1>
-            <form action="upload_video" method="post" enctype=multipart/form-data>
-                <input type="file" name="file" multiple>
-                <br/>
-                <input type="submit" value="Загрузить">
-            </form>
-            <br>
-            {% if dataurl %}
-                <a href="data/{{dataurl}}">Скачать архив лиц</a>
-            {% endif %}
-        </td>
-        <td>
-            <h1>Загрузка Архива лиц</h1>
-            <form action="upload_zip" method="post" enctype=multipart/form-data>
-                <input type="file" name="file" multiple>
-                <br/>
-                <input type="submit" value="Загрузить">
-            </form>
-            <br>
-            {% if url %}
-                <a href="face/{{url}}">Скачать сеть</a>
-            {% endif %}
-        </td></tr>
-    </table>
+    <center>
+        <h1>Добро пожаловать в систему распознавания лиц!</h1>
+        <p>Давайте обучим на Вас модель распознавания лиц. Для этого вы можете:</p>
+        <p><input type="radio" name="type" value="upload" checked>Загрузить файлы</p>
+        <p><input type="radio" name="type" value="web">Снять видео с web-камеры</p>
+        <p><button onclick="next(document)">Далее</button></p>
+    </center>
 </body>
 </html>

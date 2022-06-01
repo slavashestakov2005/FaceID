@@ -18,8 +18,8 @@ class Detector:
     def detect_numpy(self, img_numpy):
         return self.detector.detectMultiScale(img_numpy, **Config.DETECTOR_KWARGS)
 
-    def parse_images(self, folder_from, folder_to):
-        i, p = 0, Config.PADDING
+    def parse_images(self, folder_from, folder_to, start=0):
+        i, p = start, Config.PADDING
         for file in glob(folder_from + '/*.*'):
             image = cv2.imread(file)
             faces = self.detect_image(image)
@@ -27,9 +27,10 @@ class Detector:
                 face = image[y - p:y + h + p, x - p:x + w + p]
                 cv2.imwrite(folder_to + '/' + str(i) + '.png', face)
                 i += 1
+        return i
 
-    def parse_videos(self, folder_from, folder_to, angle=0):
-        i, p = 0, Config.PADDING
+    def parse_videos(self, folder_from, folder_to, start=0, angle=0):
+        i, p = start, Config.PADDING
         for file in glob(folder_from + '/*.*'):
             stream = cv2.VideoCapture(file)
             while stream.isOpened():
@@ -46,9 +47,10 @@ class Detector:
                         i += 1
                     except Exception as ex:  # empty image
                         pass
+        return i
 
-    def get_data(self, folder, folder_to):
-        images = chose_images(folder)
+    def get_data(self, folder_from, folder_to):
+        images = chose_images(folder_from)
         data1, data2 = [], []
         for (i, imagePath) in enumerate(images):
             image = Image.open(imagePath).convert('L')

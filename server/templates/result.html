@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Свой-чужой</title>
+    <script src="JS/script.js"></script>
+</head>
+<body>
+    <center>
+        <h1>Ваши лица найдены!</h1>
+        <p>Вы можете <a href="data/{{url}}">скачать</a> найденные лица и удалить всё, что распознано неверно.</p>
+        <p>И загрузить итоговый архив, по которому мы потом обучем модель.</p>
+        <p>(Если Вы не хотите проверять, то можете нажать на кнопку «Загрузить» и мы обучим модель по всем фото)</p>
+        <p>Мы переместим тебя на следующая страницу, как только модель обучится.</p>
+        <p><form action="upload_zip" method="post" enctype=multipart/form-data>
+            <input type="text" name="id" value="{{url}}" hidden>
+            <input type="file" name="file" multiple>
+            <br/>
+            <input type="submit" value="Загрузить">
+        </form></p>
+        <p><button onclick="main()">На главную</button></p>
+    </center>
+</body>
+</html>
