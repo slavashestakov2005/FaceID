@@ -3,7 +3,7 @@ from .trustmetric import TrustMetric
 from .detector import Detector
 from .utils import get_font
 from time import time
-from telegram import send_message
+from telegram.client import send_message_client
 import cv2
 # import pickle
 from glob import glob
@@ -62,12 +62,12 @@ def capture_stream_cv(face_path, video=None, result=None):
     if video:
         output.release()
     trust_metric.close_plot()
-    answer = trust_metric.get_result()
+    b, answer = trust_metric.get_result(), trust_metric.get_message()
     trust_metric.show_hist(result)
-    send_message(trust_metric.get_message())
+    send_message_client(recognizer.face, recognizer.name, answer)
     trust_metric.save_to_model(recognizer)
     recognizer.write(face_path)
-    return answer
+    return b
 
 
 def capture_stream_from_image_folder_cv(face_path, folder):
@@ -91,6 +91,8 @@ def capture_stream_from_image_folder_cv(face_path, folder):
         #     send_message('«Своих»: {}, «чужих»: {}'.format(a, b))
     cv2.destroyAllWindows()
     trust_metric.show_hist()
-    send_message(trust_metric.get_message())
+    answer = trust_metric.get_message()
+    send_message_client(recognizer.face, recognizer.name, answer)
     trust_metric.save_to_model(recognizer)
     recognizer.write(face_path)
+    return answer

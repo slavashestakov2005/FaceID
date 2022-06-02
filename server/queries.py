@@ -9,6 +9,8 @@ from glob import glob
 from .config import Config
 from .errors import forbidden_error, not_found_error
 from recognition import Detector, CVModel
+from telegram.server import Bot
+from .database import FacesTable
 '''
     generate_folder_name()              Придумывает уникаольное имя для лица.
     /               index()             Возвращает стартовую страницу.
@@ -17,6 +19,8 @@ from recognition import Detector, CVModel
     /upload_zip     upload_zip()        Загружает архив с лицами и обучает модель.
     /face/<id>      download_face()     Выгружает параметры лица.
     /data/<id>      download_data()     Выгружает лица, найденные на фото.
+    /msg            msg()               Отправляет сообщения от клиентов в бот.
+    /add_face       add_face()          Добавляет в БД модели, обученные не через сайт.
 '''
 
 
@@ -146,17 +150,20 @@ def upload_zip():
     try:
         files = request.files.getlist("file")
         url = request.form['id']
+        name = request.form['name']
     except Exception:
         return forbidden_error()
 
     url, directory = generate_folder_name(url)
+    FacesTable.insert(int(url))
     temp_directory = temp_folder(directory)
     temp2_directory = temp2_folder(directory)
     archive = images_archive(directory)
+    model = CVModel()
+    model.name = name
 
     if len(files) == 0 or len(files) == 1 and files[0].filename == '':
         unpack_archive(archive + '.zip', temp_directory, "zip")
-        model = CVModel()
         model.train(*Detector().get_data(directory, temp_directory))
         model.write(directory)
         clear_dir(temp_directory)
@@ -176,7 +183,6 @@ def upload_zip():
         extension = file.rsplit('.')[-1]
         if extension not in Config.IMAGE_EXTENSIONS:
             os.remove(file)
-    model = CVModel()
     model.train(*Detector().get_data(temp2_directory, temp_directory))
     model.write(directory)
     clear_dir(temp_directory)
@@ -196,3 +202,28 @@ def download_face(face):
 def download_data(face):
     file = './data/{}/images.zip'.format(face)
     return send_file(file, as_attachment=True, attachment_filename='{}.zip'.format(face))
+
+
+@app.route("/msg", methods=['POST'])
+@cross_origin()
+def msg():
+    try:
+        text = request.form['text']
+        face = int(request.form['face'])
+    except Exception:
+        return forbidden_error()
+
+    Bot.send_message_server(text, face)
+    return render_template('index.html')
+
+
+@app.route("/add_face", methods=['POST'])
+@cross_origin()
+def add_face():
+    try:
+        face = int(request.form['face'])
+    except Exception:
+        return forbidden_error()
+
+    FacesTable.insert(face)
+    return render_template('index.html')

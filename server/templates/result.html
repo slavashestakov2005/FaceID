@@ -14,8 +14,8 @@
         <p>Мы переместим тебя на следующая страницу, как только модель обучится.</p>
         <p><form action="upload_zip" method="post" enctype=multipart/form-data>
             <input type="text" name="id" value="{{url}}" hidden>
-            <input type="file" name="file" multiple>
-            <br/>
+            <p><input type="text" placeholder="Ваше имя" name="name"></p>
+            <p><input type="file" name="file" multiple></p>
             <input type="submit" value="Загрузить">
         </form></p>
         <p><button onclick="main()">На главную</button></p>

@@ -3,7 +3,7 @@ from server.queries import generate_folder_name, create_dir
 from recognition.videostream import capture_stream_cv
 from recognition.cv import CVModel
 from recognition.detector import Detector
-from telegram.bot import send_message
+from telegram.client import send_parse
 
 
 data = [
@@ -66,10 +66,11 @@ images_count = capture_data(folder + '/image', folder + '/video/train.avi')
 write([*data[11:12], data[12].format(images_count)])
 write([data[13 + int(images_count > Config.IMAGES_COUNT)], *data[15:17]])
 model = CVModel()
+model.name = name
 model.train(*Detector().get_data(folder, folder + '/temp'))
 model.write(folder)
+send_parse(model.face)
 write(data[17:27])
 result = capture_stream_cv(folder, folder + '/video/test.avi', folder + '/result.png')
-send_message(message_template.format(name, tim, 'свой' if result else 'чужой'))
 write([data[27].format('свой' if result else 'чужой'), data[28].format('про' if result else 'вы')])
 write([data[30 - int(result)], *data[31:34]])

@@ -11,7 +11,7 @@ class CVModel(Model):
         super().__init__()
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
         self.confidence, self.precision = CVConfig.CONFIDENCE1, CVConfig.PRECISION1
-        self.left, self.right = CVConfig.LEFT, CVConfig.RIGHT
+        self.left, self.right, self.face, self.name = CVConfig.LEFT, CVConfig.RIGHT, None, 'nameless'
 
     def train(self, x, y):
         self.recognizer.train(x, y)
@@ -31,15 +31,17 @@ class CVModel(Model):
             data = pickle.loads(f.read())
         self.recognizer.read(model_file)
         self.confidence, self.precision = data['confidence'], data['precision']
-        self.left, self.right = data['left'], data['right']
+        self.left, self.right, self.face, self.name = data['left'], data['right'], data['face'], data['name']
         rmtree(folder)
 
     def write(self, face):
+        self.face = os.path.split(face)[-1]
         folder = os.path.join(face, 'cv')
         if not os.path.exists(folder):
             os.makedirs(folder)
         data_file = folder + '/data'
-        data = {'confidence': self.confidence, 'precision': self.precision, 'left': self.left, 'right': self.right}
+        data = {'confidence': self.confidence, 'precision': self.precision, 'left': self.left, 'right': self.right,
+                'face': self.face, 'name': self.name}
         with open(data_file, "wb") as f:
             f.write(pickle.dumps(data))
         model_file = folder + '/model'

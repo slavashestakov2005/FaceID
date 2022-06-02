@@ -88,6 +88,8 @@ class TrustMetric:
 
     def close_plot(self):
         plt.close()
+        self.v.sort()
+        self.data = pd.DataFrame.from_dict({'value': self.v})
 
     def draw_hist(self):
         plt.clf()
@@ -121,14 +123,12 @@ class TrustMetric:
         return snsplot, ax
 
     def show_hist(self, filename=None):
-        self.v.sort()
-        self.data = pd.DataFrame.from_dict({'value': self.v})
         print('====== Результаты =====')
         print('\n'.join(self.get_statistics()))
         print('======   Конец    =====')
         input('Теперь посмотрим на распределение «коэффициента доверия». ')
         input('Вы можете нажимать на график чтобы узнать процентное распределение «коэффициента доверия». ')
-        input('Нажмите что-нибудь, чтобы мы ноконец вывели Вам график. ')
+        input('Нажмите что-нибудь, чтобы мы наконец вывели Вам график. ')
 
         def onclick(event):
             x, y = event.xdata, event.ydata
