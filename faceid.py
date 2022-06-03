@@ -1,5 +1,5 @@
 from recognition.capture import *
-from server.queries import generate_folder_name, create_dir
+from server.facefolder import FaceFolder
 from recognition.videostream import capture_stream_cv
 from recognition.cv import CVModel
 from recognition.detector import Detector
@@ -50,8 +50,8 @@ def write(text):
         input(line + ' ')
 
 
-tim, folder = generate_folder_name()
-create_dir(folder)
+folder = FaceFolder()
+folder.create()
 write(data[0:1])
 print(data[1])
 name = ''
@@ -62,15 +62,15 @@ while not name:
     print(data[3])
 write([data[4].format(name), data[5]])
 write(data[6:11])
-images_count = capture_data(folder + '/image', folder + '/video/train.avi')
+images_count = capture_data(folder.image(), folder.video() + '/train.avi')
 write([*data[11:12], data[12].format(images_count)])
 write([data[13 + int(images_count > Config.IMAGES_COUNT)], *data[15:17]])
 model = CVModel()
 model.name = name
-model.train(*Detector().get_data(folder, folder + '/temp'))
-model.write(folder)
+model.train(*Detector().get_data(folder.dir(), folder.temp()))
+model.write(folder.dir())
 send_parse(model.face)
 write(data[17:27])
-result = capture_stream_cv(folder, folder + '/video/test.avi', folder + '/result.png')
+result = capture_stream_cv(folder.dir(), folder.video() + '/test.avi', folder.dir() + '/result.png')
 write([data[27].format('свой' if result else 'чужой'), data[28].format('про' if result else 'вы')])
 write([data[30 - int(result)], *data[31:34]])

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Свой-чужой</title>
+    <script src="JS/script.js"></script>
+</head>
+<body>
+    <center>
+        <h1>Съёмка видео</h1>
+        <p>На этой странице вы можете снять своё видео с web камеры, чтобы потом мы нашли на нём Ваше лицо.</p>
+        <p>Для начала записи нажмите на кнопку «Начать запись».</p>
+        <p>После нажатия на кнопку «Останосить запись» Ваше видео начнёт загружаться на сайт, и, как только на нём будут найдены все лица, мы переметим тебя на следующую страницу.</p>
+        <p>
+            <video id="web-cam" autoplay muted height="300px"></video>
+            <br>
+            <button id="start-stop" onclick="web_cam_click(document);">Начать запись</button>
+            <p id="out"></p>
+        </p>
+        <button onclick="main()">Назад</button>
+    </center>
+    <script>web_cam(document);</script>
+</body>
+</html>

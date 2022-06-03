@@ -8,4 +8,5 @@ CORS(app)
 app.config.from_object(Config)
 
 
+import server.facefolder
 import server.queries
