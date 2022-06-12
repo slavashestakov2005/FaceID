@@ -2,7 +2,6 @@ from .config import Config
 from .utils import chose_images
 import cv2
 from glob import glob
-from PIL import Image
 import numpy as np
 
 
@@ -49,15 +48,16 @@ class Detector:
                         pass
         return i
 
-    def get_data(self, folder_from, folder_to):
+    def get_data(self, folder_from, folder_to, gray=True):
         images = chose_images(folder_from)
         data1, data2 = [], []
         for (i, imagePath) in enumerate(images):
-            image = Image.open(imagePath).convert('L')
-            img_numpy = np.array(image, 'uint8')
-            faces = self.detect_numpy(img_numpy)
+            image = cv2.imread(imagePath)
+            faces = self.detect_image(image)
+            if gray:
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             for (x, y, w, h) in faces:
-                face = img_numpy[y:y + h, x:x + w]
+                face = image[y:y + h, x:x + w]
                 face = cv2.resize(face, Config.FACE_SIZE)
                 cv2.imwrite(folder_to + '/' + str(len(data2)) + '.png', face)
                 data1.append(face)

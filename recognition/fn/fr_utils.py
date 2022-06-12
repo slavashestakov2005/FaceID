@@ -3,11 +3,10 @@ import numpy as np
 import os
 import cv2
 from numpy import genfromtxt
-from keras.layers import Conv2D, ZeroPadding2D, Activation, Input, concatenate
-from keras.models import Model
+from keras.layers import Conv2D, ZeroPadding2D, Activation
 from tensorflow.keras.layers import BatchNormalization
-from keras.layers.pooling import MaxPooling2D, AveragePooling2D
 import h5py
+from .config import FaceNetConfig
 
 
 _FLOATX = 'float32'
@@ -196,12 +195,12 @@ def load_dataset():
 
 
 def img_path_to_encoding(image_path, model):
-    img1 = cv2.imread(image_path, 1)
-    return img_to_encoding(img1, model)
+    img = cv2.imread(image_path)
+    return img_to_encoding(img, model)
     
 
 def img_to_encoding(image, model):
-    image = cv2.resize(image, (96, 96)) 
+    image = cv2.resize(image, FaceNetConfig.FACE_SIZE)
     img = image[..., ::-1]
     img = np.around(np.transpose(img, (2, 0, 1))/255.0, decimals=12)
     x_train = np.array([img])

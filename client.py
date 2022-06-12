@@ -1,7 +1,9 @@
-from recognition.videostream import capture_stream_cv
+from recognition.videostream import capture_stream
+from recognition.fn import FaceNetModel
 
 
-capture_stream_cv('server/data/{}'.format(input('FaceID: ')))
+FaceNetModel.load_net()
+capture_stream('server/data/{}'.format(input('FaceID: ')))
 # capture_stream_from_image_folder_cv('server/data/{}'.format(input('FaceID: ')), input('Folder: '))
 # folder = input('Folder for split: ')
 # while True:

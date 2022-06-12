@@ -1,34 +1,15 @@
-from .cv import CVModel
+from .fn import FaceNetModel
 from .trustmetric import TrustMetric
 from .detector import Detector
 from .utils import get_font
 from time import time
 from telegram.client import send_message_client
 import cv2
-# import pickle
 from glob import glob
 
 
-# def capture_stream_fr(face_path):
-#     face = pickle.loads(open(face_path, "rb").read())
-#     video_capture = cv2.VideoCapture(0)
-#     while True:
-#         ret, frame = video_capture.read()
-#         boxes = detect_faces_fr(frame)
-#         for (t, r, b, l) in boxes:
-#             cv2.rectangle(frame, (l, t), (r, b), (0, 255, 0), 2)
-#         cv2.imshow("Frame", frame)
-#         a, b = compare_faces_fr(frame, boxes, face)
-#         if cv2.waitKey(1) & 0xFF == ord('q'):
-#             break
-#         if a:
-#             send_message('«Своих»: {}, «чужих»: {}'.format(a, b))
-#     video_capture.release()
-#     cv2.destroyAllWindows()
-
-
-def capture_stream_cv(face_path, video=None, result=None):
-    recognizer, trust_metric, detector, font = CVModel(), TrustMetric(), Detector(), get_font()
+def capture_stream(face_path, video=None, result=None):
+    recognizer, trust_metric, detector, font = FaceNetModel(), TrustMetric(), Detector(), get_font()
     recognizer.read(face_path)
     trust_metric.load_from_model(recognizer)
     video_capture = cv2.VideoCapture(0)
@@ -70,8 +51,8 @@ def capture_stream_cv(face_path, video=None, result=None):
     return b
 
 
-def capture_stream_from_image_folder_cv(face_path, folder):
-    recognizer, trust_metric, detector, font = CVModel(), TrustMetric(), Detector(), get_font()
+def capture_stream_from_image_folder(face_path, folder):
+    recognizer, trust_metric, detector, font = FaceNetModel(), TrustMetric(), Detector(), get_font()
     recognizer.read(face_path)
     trust_metric.load_from_model(recognizer)
     for file in glob(folder + '/*.*'):

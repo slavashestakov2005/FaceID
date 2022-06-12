@@ -1,14 +1,10 @@
-import tensorflow as tf
-import numpy as np
-import os
-from numpy import genfromtxt
 from keras import backend as K
 from keras.layers import Conv2D, ZeroPadding2D, Activation, Input, concatenate
 from keras.models import Model
 from tensorflow.keras.layers import BatchNormalization
 from keras.layers.pooling import MaxPooling2D, AveragePooling2D
 from keras.layers.core import Lambda, Flatten, Dense
-from recognition.net import fr_utils
+from recognition.fn import fr_utils
 
 
 def inception_block_1a(X):
@@ -273,7 +269,7 @@ def faceRecoModel(input_shape):
     X = Dense(128, name='dense_layer')(X)
     
     # L2 normalization
-    X = Lambda(lambda  x: K.l2_normalize(x,axis=1))(X)
+    X = Lambda(lambda x: K.l2_normalize(x, axis=1))(X)
 
     # Create model instance
     model = Model(inputs = X_input, outputs = X, name='FaceRecoModel')

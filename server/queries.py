@@ -7,11 +7,13 @@ from shutil import make_archive, unpack_archive, copyfile
 from glob import glob
 from .config import Config
 from .errors import forbidden_error, not_found_error
-from recognition import Detector, CVModel
+from recognition import Detector, CVModel, FaceNetModel
 from telegram.server import Bot
 from .database import FacesTable
 from .facefolder import FaceFolder
 '''
+    /compile_net    compile_net()       Компилирует FaceNet.
+    /load_net       load_net()          Загружает FaceNet.
     /               index()             Возвращает стартовую страницу.
     /<path>         static_file(path)   Возвращает статическую страницу, проверяя статус пользователя и доступ к файлу.
     /upload         upload()            Загружает фото, видео напрямую и из архивов.
@@ -22,6 +24,20 @@ from .facefolder import FaceFolder
     /msg            msg()               Отправляет сообщения от клиентов в бот.
     /add_face       add_face()          Добавляет в БД модели, обученные не через сайт.
 '''
+
+
+@app.route('/compile_net')
+@cross_origin()
+def compile_net():
+    FaceNetModel.compile_net()
+    return "OK"
+
+
+@app.route('/load_net')
+@cross_origin()
+def load_net():
+    FaceNetModel.load_net()
+    return "OK"
 
 
 @app.route('/')
@@ -122,12 +138,12 @@ def upload_zip():
 
     FacesTable.insert(int(url))
     folder = FaceFolder(url)
-    model = CVModel()
+    model = FaceNetModel()
     model.name = name
 
     if len(files) == 0 or len(files) == 1 and files[0].filename == '':
         unpack_archive(folder.images_archive() + '.zip', folder.temp(), "zip")
-        model.train(*Detector().get_data(folder.dir(), folder.temp()))
+        model.train(*Detector().get_data(folder.dir(), folder.temp(), False))
         model.write(folder.dir())
         folder.clear()
         return render_template('end.html', url=url)
@@ -146,7 +162,7 @@ def upload_zip():
         extension = file.rsplit('.')[-1]
         if extension not in Config.IMAGE_EXTENSIONS:
             os.remove(file)
-    model.train(*Detector().get_data(folder.temp2(), folder.temp()))
+    model.train(*Detector().get_data(folder.temp2(), folder.temp(), False))
     model.write(folder.dir())
     folder.clear()
     return render_template('end.html', url=url)
