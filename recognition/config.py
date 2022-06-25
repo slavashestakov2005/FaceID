@@ -11,3 +11,4 @@ class Config:
     PLOT_TIME = 5
     CAPTURE_TIME = 30
     PLAY_TIME = 60
+    DATASET = 'dataset'
