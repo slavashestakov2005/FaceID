@@ -1,4 +1,4 @@
-from .cv import CVModel
+from .fn import FaceNetModel
 import cv2
 from .detector import Detector
 from glob import glob
@@ -53,8 +53,8 @@ def test():
     for name1 in names:
         print(name1)
         f1 = Config.DATASET + '/' + name1
-        model = CVModel()
-        data = detector.get_data(f1, tmp)
+        model = FaceNetModel()
+        data = detector.get_data(f1, tmp, False)
         if len(data[0]) == 0:
             logger.empty(name1)
             continue
