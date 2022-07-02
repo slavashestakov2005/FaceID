@@ -23,9 +23,12 @@ class Detector:
             image = cv2.imread(file)
             faces = self.detect_image(image)
             for (x, y, w, h) in faces:
-                face = image[y - p:y + h + p, x - p:x + w + p]
-                cv2.imwrite(folder_to + '/' + str(i) + '.png', face)
-                i += 1
+                try:
+                    face = image[y - p:y + h + p, x - p:x + w + p]
+                    cv2.imwrite(folder_to + '/' + str(i) + '.png', face)
+                    i += 1
+                except Exception as ex:  # empty image
+                    pass
         return i
 
     def parse_videos(self, folder_from, folder_to, start=0, angle=0):

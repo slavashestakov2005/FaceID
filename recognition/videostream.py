@@ -71,6 +71,7 @@ def capture_stream_from_image_folder(face_path, folder):
         # if a:
         #     send_message('«Своих»: {}, «чужих»: {}'.format(a, b))
     cv2.destroyAllWindows()
+    trust_metric.close_plot()
     trust_metric.show_hist()
     answer = trust_metric.get_message()
     send_message_client(recognizer.face, recognizer.name, answer)

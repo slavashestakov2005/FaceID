@@ -78,10 +78,10 @@ class TrustMetric:
         return 'Свой' if self.get_result() else 'Чужой'
 
     def get_statistics(self):
-        s1 = 'Min: {}'.format(round(self.v[0], 2) if len(self.v) else 'unknown')
-        s2 = 'Max: {}'.format(round(self.v[-1], 2) if len(self.v) else 'unknown')
-        s3 = 'Average: {}'.format(round(sum(self.v) / len(self.v), 2) if len(self.v) else 'unknown')
-        s4 = 'Median: {}'.format(round(self.v[len(self.v) // 2], 2) if len(self.v) else 'unknown')
+        s1 = 'Min: {}'.format(str(round(self.v[0], 2)) if len(self.v) else 'unknown')
+        s2 = 'Max: {}'.format(str(round(self.v[-1], 2)) if len(self.v) else 'unknown')
+        s3 = 'Average: {}'.format(str(round(sum(self.v) / len(self.v), 2)) if len(self.v) else 'unknown')
+        s4 = 'Median: {}'.format(str(round(self.v[len(self.v) // 2], 2)) if len(self.v) else 'unknown')
         s5 = 'A. time: {}'.format(str(round(self.x[-1] * 1000 / len(self.v))) + 'ms' if len(self.v) else 'unknown')
         s6 = self.get_message()
         return [s1, s2, s3, s4, s5, s6]
