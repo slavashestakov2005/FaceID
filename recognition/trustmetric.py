@@ -95,7 +95,7 @@ class TrustMetric:
         plt.clf()
         fig = plt.figure(1)
         ax = fig.add_axes([0.13, 0.1, 0.6, 0.72])
-        snsplot = sns.kdeplot(self.data['value'], shade=True)
+        snsplot = sns.kdeplot(self.data['value'], fill=True)
         x_lim = snsplot.axes.get_xlim()
         y_lim = snsplot.axes.get_ylim()
         ar = [-1, -1]

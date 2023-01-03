@@ -1,4 +1,4 @@
-from .fn import FaceNetModel
+from .cv import CVModel
 from .trustmetric import TrustMetric
 from .detector import Detector
 from .utils import get_font
@@ -9,7 +9,7 @@ from glob import glob
 
 
 def capture_stream(face_path, video=None, result=None):
-    recognizer, trust_metric, detector, font = FaceNetModel(), TrustMetric(), Detector(), get_font()
+    recognizer, trust_metric, detector, font = CVModel(), TrustMetric(), Detector(), get_font()
     recognizer.read(face_path)
     trust_metric.load_from_model(recognizer)
     video_capture = cv2.VideoCapture(0)
@@ -52,7 +52,7 @@ def capture_stream(face_path, video=None, result=None):
 
 
 def capture_stream_from_image_folder(face_path, folder):
-    recognizer, trust_metric, detector, font = FaceNetModel(), TrustMetric(), Detector(), get_font()
+    recognizer, trust_metric, detector, font = CVModel(), TrustMetric(), Detector(), get_font()
     recognizer.read(face_path)
     trust_metric.load_from_model(recognizer)
     for file in glob(folder + '/*.*'):

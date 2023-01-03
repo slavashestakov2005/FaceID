@@ -7,7 +7,7 @@ from shutil import make_archive, unpack_archive, copyfile
 from glob import glob
 from .config import Config
 from .errors import forbidden_error, not_found_error
-from recognition import Detector, CVModel, FaceNetModel
+from recognition import Detector, CVModel
 from telegram.server import Bot
 from .database import FacesTable
 from .facefolder import FaceFolder
@@ -24,20 +24,6 @@ from .facefolder import FaceFolder
     /msg            msg()               Отправляет сообщения от клиентов в бот.
     /add_face       add_face()          Добавляет в БД модели, обученные не через сайт.
 '''
-
-
-@app.route('/compile_net')
-@cross_origin()
-def compile_net():
-    FaceNetModel.compile_net()
-    return "OK"
-
-
-@app.route('/load_net')
-@cross_origin()
-def load_net():
-    FaceNetModel.load_net()
-    return "OK"
 
 
 @app.route('/')
@@ -138,12 +124,12 @@ def upload_zip():
 
     FacesTable.insert(int(url))
     folder = FaceFolder(url)
-    model = FaceNetModel()
+    model = CVModel()
     model.name = name
 
     if len(files) == 0 or len(files) == 1 and files[0].filename == '':
         unpack_archive(folder.images_archive() + '.zip', folder.temp(), "zip")
-        model.train(*Detector().get_data(folder.dir(), folder.temp(), False))
+        model.train(*Detector().get_data(folder.dir(), folder.temp()))
         model.write(folder.dir())
         folder.clear()
         return render_template('end.html', url=url)
@@ -172,14 +158,14 @@ def upload_zip():
 @cross_origin()
 def download_face(face):
     file = './data/{}/cv.face'.format(face)
-    return send_file(file, as_attachment=True, attachment_filename='{}.face'.format(face))
+    return send_file(file, as_attachment=True, download_name='{}.face'.format(face))
 
 
 @app.route("/data/<int:face>")
 @cross_origin()
 def download_data(face):
     file = './data/{}/images.zip'.format(face)
-    return send_file(file, as_attachment=True, attachment_filename='{}.zip'.format(face))
+    return send_file(file, as_attachment=True, download_name='{}.zip'.format(face))
 
 
 @app.route("/msg", methods=['POST'])
