@@ -14,6 +14,7 @@ class TrustMetric:
         self.end_time = self.start
         self.confidence, self.precision, self.left, self.right = 0, 0, 0, 0
         self.is_closed_plot, self.fig, self.ax = False, None, None
+        self.other = True
 
     def load_from_model(self, model):
         self.confidence, self.precision = model.confidence, model.precision
@@ -72,7 +73,7 @@ class TrustMetric:
         return l / ln, 1 - l / ln
 
     def get_result(self):
-        return self.find_value(self.confidence)[0] * 100 >= self.precision
+        return self.other and self.find_value(self.confidence)[0] * 100 >= self.precision
 
     def get_message(self):
         return 'Свой' if self.get_result() else 'Чужой'

@@ -8,7 +8,7 @@ from glob import glob
 from .config import Config
 from .errors import forbidden_error, not_found_error
 from recognition import Detector, CVModel
-from telegram.server import Bot
+from tlg.server import Bot
 from .database import FacesTable
 from .facefolder import FaceFolder
 '''

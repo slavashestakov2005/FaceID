@@ -2,7 +2,7 @@ import os
 from server import app
 from server.errors import start_debug
 # from recognition.net.makens import load_net
-from telegram.server import Bot
+from tlg.server import Bot
 
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))

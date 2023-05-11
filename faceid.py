@@ -3,7 +3,7 @@ from server.facefolder import FaceFolder
 from recognition.videostream import capture_stream_cv
 from recognition.cv import CVModel
 from recognition.detector import Detector
-from telegram.client import send_parse
+from tlg.client import send_parse
 
 
 data = [

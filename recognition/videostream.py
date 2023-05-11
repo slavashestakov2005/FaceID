@@ -1,15 +1,16 @@
 from .cv import CVModel
+from .eyes import Eyes
 from .trustmetric import TrustMetric
 from .detector import Detector
 from .utils import get_font
 from time import time
-from telegram.client import send_message_client
+from tlg.client import send_message_client
 import cv2
 from glob import glob
 
 
 def capture_stream(face_path, video=None, result=None):
-    recognizer, trust_metric, detector, font = CVModel(), TrustMetric(), Detector(), get_font()
+    recognizer, trust_metric, detector, eyes, font = CVModel(), TrustMetric(), Detector(), Eyes(), get_font()
     recognizer.read(face_path)
     trust_metric.load_from_model(recognizer)
     video_capture = cv2.VideoCapture(0)
@@ -29,6 +30,8 @@ def capture_stream(face_path, video=None, result=None):
             color = (0, 255, 0)
             if trust[i] > trust_metric.confidence:
                 color = (0, 0, 255)
+            else:
+                eyes.count_open_eyes(frame, x, y, w, h)
             cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
         cv2.imshow("Frame", frame)
         if len(trust):
@@ -43,6 +46,7 @@ def capture_stream(face_path, video=None, result=None):
     if video:
         output.release()
     trust_metric.close_plot()
+    trust_metric.other = eyes.state()
     b, answer = trust_metric.get_result(), trust_metric.get_message()
     trust_metric.show_hist(result)
     send_message_client(recognizer.face, recognizer.name, answer)
