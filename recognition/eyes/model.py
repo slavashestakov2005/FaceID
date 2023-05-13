@@ -6,9 +6,7 @@ from keras.models import Sequential, model_from_json
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 from keras.preprocessing.image import ImageDataGenerator
 
-from imageio import imread
-from cv2 import resize as imresize
-from imageio import imwrite as imsave
+
 from .config import EyeConfig
 
 
