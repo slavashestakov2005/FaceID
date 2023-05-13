@@ -2,12 +2,8 @@ import os
 from PIL import Image
 import numpy as np
 
-from keras.models import Sequential
-from keras.layers import Conv2D
-from keras.layers import AveragePooling2D
-from keras.layers import Flatten
-from keras.layers import Dense
-from keras.models import model_from_json
+from keras.models import Sequential, model_from_json
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 from keras.preprocessing.image import ImageDataGenerator
 
 from imageio import imread
@@ -48,22 +44,16 @@ def train(train_generator, val_generator):
     print('[LOG] Intialize Neural Network')
 
     model = Sequential()
-
-    model.add(Conv2D(filters=6, kernel_size=(3, 3), activation='relu', input_shape=(EyeConfig.IMG_SIZE, EyeConfig.IMG_SIZE, 1)))
-    model.add(AveragePooling2D())
-
-    model.add(Conv2D(filters=16, kernel_size=(3, 3), activation='relu'))
-    model.add(AveragePooling2D())
-
+    model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(EyeConfig.IMG_SIZE, EyeConfig.IMG_SIZE, 1)))
+    model.add(MaxPooling2D((2, 2)))
+    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(MaxPooling2D((2, 2)))
+    model.add(Conv2D(128, (3, 3), activation='relu'))
+    model.add(MaxPooling2D((2, 2)))
     model.add(Flatten())
-
-    model.add(Dense(units=120, activation='relu'))
-
-    model.add(Dense(units=84, activation='relu'))
-
-    model.add(Dense(units=1, activation='sigmoid'))
-
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.add(Dense(128, activation='relu'))
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
     model.fit_generator(generator=train_generator,
                         steps_per_epoch=STEP_SIZE_TRAIN,
