@@ -1,3 +1,4 @@
 server/data/[0-9]*
 dataset/*
 recognition/eyes/dataset/*
+**/__pycache__/**
